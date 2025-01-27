@@ -1,4 +1,4 @@
-import { Excalidraw, THEME } from "@excalidraw/excalidraw";
+import { Excalidraw } from "@excalidraw/excalidraw";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
 import { useEffect, useRef } from "react";
@@ -35,22 +35,42 @@ const ExcalidrawComponent = () => {
   }, [socket, creator]);
 
   useEffect(() => {
-    setTimeout(() => {
-      const [island1, island2] = document.getElementsByClassName(
-        "Island"
-      ) as HTMLCollectionOf<HTMLElement>;
+    const fn =
+      window.innerWidth < 768
+        ? () => {
+            const [island1, island2] = document.getElementsByClassName(
+              "Island"
+            ) as HTMLCollectionOf<HTMLElement>;
 
-      const [island3] = document.getElementsByClassName(
-        "mobile-misc-tools-container"
-      ) as HTMLCollectionOf<HTMLElement>;
+            const [island3] = document.getElementsByClassName(
+              "mobile-misc-tools-container"
+            ) as HTMLCollectionOf<HTMLElement>;
 
-      island1.style.display = creator ? "" : "none";
-      island2.style.display = creator ? "" : "none";
-      island3.style.display = "none";
-      (
-        island2.childNodes[0].childNodes[0].childNodes[0] as HTMLElement
-      ).style.display = "none";
-    }, 5);
+            island1.style.display = creator ? "" : "none";
+            island2.style.display = creator ? "" : "none";
+            island3.style.display = "none";
+            (
+              island2.childNodes[0].childNodes[0].childNodes[0] as HTMLElement
+            ).style.display = "none";
+          }
+        : () => {
+            const [header] = document.getElementsByClassName(
+              "App-menu App-menu_top"
+            );
+            header.childNodes.forEach((node: any, i) => {
+              if (!creator) {
+                return (node.style.display = "none");
+              }
+              if (i !== 1) return (node.style.visibility = "hidden");
+            });
+
+            const [footer] = document.getElementsByClassName(
+              "layer-ui__wrapper__footer-right zen-mode-transition"
+            ) as HTMLCollectionOf<HTMLElement>;
+            footer.style.display = "none";
+          };
+
+    setTimeout(fn, 5);
   }, [creator]);
 
   return (
@@ -61,7 +81,7 @@ const ExcalidrawComponent = () => {
         excalidrawAPI={(api) => {
           boardRef.current = api;
         }}
-        theme={creator ? THEME.LIGHT : THEME.DARK}
+        // theme={creator ? THEME.LIGHT : THEME.DARK}
         onChange={onChange}
       />
     </div>
