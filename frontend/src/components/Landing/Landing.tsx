@@ -1,8 +1,49 @@
+import useUserInformation from "@/hooks/useUserInformation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { useState } from "react";
+import axios from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
+  const { userData, setUserData } = useUserInformation();
+  const [name, setName] = useState(userData?.name);
+  const [roomNumber, setRoomNumber] = useState("");
+  const navigate = useNavigate();
+
+  const handleCreateRoom = async () => {
+    try {
+      let userId = userData?.id;
+      if (!userData?.id) {
+        const { data } = await axios.post("/create-user", { name });
+        setUserData(data);
+        userId = data.id;
+      }
+
+      const { data } = await axios.post("/create-room", { userId });
+      navigate("/room/" + data.id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleJoinRoom = async () => {
+    try {
+      let userId = userData?.id;
+      if (!userData?.id) {
+        const { data } = await axios.post("/create-user", { name });
+        setUserData(data);
+        userId = data.id;
+      }
+
+      const { data } = await axios.post("/join-room", { userId, roomNumber });
+      navigate("/room/" + data.id);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-amber-50 flex items-center justify-center p-4 retro-scanlines">
       <div className="w-full max-w-md bg-[#ece6c2]/50 border-4 border-[#6f5643] rounded-lg shadow-lg p-6 space-y-6 relative overflow-hidden">
@@ -15,8 +56,9 @@ const Landing = () => {
           <Input
             type="text"
             placeholder="Enter your name"
-            // value={username}
-            // onChange={(e) => setUsername(e.target.value)}
+            value={name}
+            disabled={!!userData?.id}
+            onChange={(e) => setName(e.target.value)}
             className="border-[#cc6b49] focus-visible:ring-0 text-[#cc6b49] placeholder-[#cc6b49]"
           />
 
@@ -38,8 +80,8 @@ const Landing = () => {
             <TabsContent value="create">
               <Button
                 className="w-full bg-[#cc6b49]/90 hover:bg-[#cc6b49] text-gray-100 font-bold font-retro"
-                // onClick={handleCreateRoom}
-                // disabled={!username}
+                onClick={handleCreateRoom}
+                disabled={!name}
               >
                 Create Room
               </Button>
@@ -49,14 +91,14 @@ const Landing = () => {
                 <Input
                   type="text"
                   placeholder="Enter room number"
-                  //   value={roomNumber}
-                  //   onChange={(e) => setRoomNumber(e.target.value)}
+                  value={roomNumber}
+                  onChange={(e) => setRoomNumber(e.target.value)}
                   className="border-[#cc6b49] focus-visible:ring-0 text-[#cc6b49] placeholder-[#cc6b49]"
                 />
                 <Button
                   className="w-full bg-[#cc6b49]/90 hover:bg-[#cc6b49] text-gray-100 font-bold font-retro"
-                  //   onClick={handleJoinRoom}
-                  //   disabled={!username || !roomNumber}
+                  onClick={handleJoinRoom}
+                  disabled={!name || !roomNumber}
                 >
                   Join Room
                 </Button>

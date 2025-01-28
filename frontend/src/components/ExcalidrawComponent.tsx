@@ -1,11 +1,9 @@
+import { socket } from "@/App";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
 import { useEffect, useRef } from "react";
 
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:4999/");
 const creator = location.href.includes("o=0");
 
 const ExcalidrawComponent = () => {

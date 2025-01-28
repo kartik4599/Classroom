@@ -1,9 +1,35 @@
+import { useNavigate, useParams } from "react-router-dom";
 import ExcalidrawComponent from "../ExcalidrawComponent";
 import { Button } from "../ui/button";
 import Header from "./Header";
 import ParticipantList from "./ParticipantList";
+import { useEffect } from "react";
+import axios from "axios";
+import useUserInformation from "@/hooks/useUserInformation";
+import useRoom from "@/hooks/useRoom";
 
 const Classroom = () => {
+  const { roomId } = useParams();
+  const userData = useUserInformation((state) => state.userData);
+  const setData = useRoom((state) => state.setData);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!roomId || !userData?.id) return;
+
+    (async () => {
+      try {
+        const { data } = await axios.post("/get-room", {
+          userId: userData.id,
+          roomId,
+        });
+        setData({ ...data, host: data?.hostId === userData?.id });
+      } catch (e) {
+        navigate("/");
+      }
+    })();
+  }, [roomId, userData]);
+
   return (
     <div className="min-h-screen bg-amber-50">
       <Header />
