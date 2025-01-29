@@ -63,7 +63,6 @@ router.post("/join-room", async (req, res) => {
 
     return res.json(room);
   } catch (e) {
-    console.log(e);
     res.status(500).send(e);
   }
 });
@@ -86,8 +85,6 @@ router.post("/get-room", async (req, res) => {
 
     return res.json(room);
   } catch (e) {
-    console.log(e);
-
     res.status(500).send(e);
   }
 });
