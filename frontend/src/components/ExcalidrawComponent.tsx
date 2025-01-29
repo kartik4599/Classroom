@@ -28,59 +28,6 @@ const ExcalidrawComponent = () => {
     socket.emit("draw-sending", roomId, value);
   };
 
-  const hidingBoardElements = () => {
-    const width = boardHtmlRef.current?.offsetWidth;
-    if (!width) return;
-
-    if (width >= 768) {
-      const [header] = document.getElementsByClassName("App-menu App-menu_top");
-      const [helpButton] = document.getElementsByClassName(
-        "layer-ui__wrapper__footer-right zen-mode-transition"
-      ) as HTMLCollectionOf<HTMLElement>;
-      helpButton.style.display = "none";
-
-      const [undoButton] = document.getElementsByClassName(
-        "undo-redo-buttons zen-mode-transition"
-      ) as HTMLCollectionOf<HTMLElement>;
-
-      if (!header) return;
-      const [header1, header2, header3] = header.childNodes as any;
-
-      if (data?.host) {
-        header1.childNodes[0].style.visibility = "hidden";
-        header3.style.visibility = "hidden";
-      } else {
-        header1.style.display = "none";
-        header2.style.display = "none";
-        header3.style.display = "none";
-        undoButton.style.display = "none";
-      }
-      return;
-    }
-
-    const [MenuButton] = document.getElementsByClassName(
-      "dropdown-menu-button main-menu-trigger zen-mode-transition dropdown-menu-button--mobile"
-    ) as HTMLCollectionOf<HTMLElement>;
-    MenuButton.style.display = "none";
-
-    const [sideContainer] = document.getElementsByClassName(
-      "mobile-misc-tools-container"
-    ) as HTMLCollectionOf<HTMLElement>;
-    sideContainer.style.display = "none";
-
-    if (!data?.host) {
-      const [header] = document.getElementsByClassName(
-        "Stack Stack_vertical"
-      ) as HTMLCollectionOf<HTMLElement>;
-      header.style.display = "none";
-
-      const [footerBar] = document.getElementsByClassName(
-        "App-toolbar-content"
-      ) as HTMLCollectionOf<HTMLElement>;
-      footerBar.style.display = "none";
-    }
-  };
-
   useEffect(() => {
     if (data?.host) return;
     socket.on("draw-receiving", (data) => {
@@ -101,11 +48,6 @@ const ExcalidrawComponent = () => {
     });
   }, [roomId]);
 
-  useEffect(() => {
-    setTimeout(hidingBoardElements, 5);
-    window.addEventListener("resize", () => setTimeout(hidingBoardElements, 5));
-  }, [data?.host]);
-
   return (
     <div
       ref={boardHtmlRef}
@@ -113,11 +55,11 @@ const ExcalidrawComponent = () => {
     >
       <Excalidraw
         UIOptions={{ tools: { image: false } }}
-        // key={new Date().getTime()}
         excalidrawAPI={(api) => {
           boardRef.current = api;
         }}
-        // theme={creator ? THEME.LIGHT : THEME.DARK}
+        viewModeEnabled={!data?.host}
+        zenModeEnabled
         onChange={onChange}
       />
     </div>
