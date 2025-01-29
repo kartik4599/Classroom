@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("draw-receive", data);
   });
 
-  socket.on("draw-sending", (data) => {
-    socket.broadcast.emit("draw-receiving", data);
+  socket.on("draw-sending", (roomId, data) => {
+    io.to(roomId).emit("draw-receiving", data);
   });
 });
