@@ -1,10 +1,11 @@
 import { socket } from "@/App";
 import useRoom from "@/hooks/useRoom";
+import useUserInformation from "@/hooks/useUserInformation";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
 import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ExcalidrawComponent = () => {
   const { roomId } = useParams();
@@ -13,6 +14,8 @@ const ExcalidrawComponent = () => {
   const boardRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const previousElements = useRef<string | null>(null);
   const { data, setMember, removeMember } = useRoom();
+  const userData = useUserInformation((state) => state.userData);
+  const navigate = useNavigate();
 
   const checkTheChange = (elements: readonly ExcalidrawElement[]) => {
     const stringObj = JSON.stringify(elements);
@@ -44,9 +47,10 @@ const ExcalidrawComponent = () => {
     });
 
     socket.on("user-left", (userId) => {
+      if (userData?.id === userId) navigate("/");
       removeMember(userId);
     });
-  }, [roomId]);
+  }, [roomId, userData?.id]);
 
   return (
     <div

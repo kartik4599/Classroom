@@ -2,7 +2,11 @@ import useRoom from "@/hooks/useRoom";
 import UserCubicle from "./UserCubicle";
 import useUserInformation from "@/hooks/useUserInformation";
 
-const ParticipantList = () => {
+const ParticipantList = ({
+  leaveHandler,
+}: {
+  leaveHandler: (userId: number) => void;
+}) => {
   const data = useRoom((state) => state?.data);
   const userData = useUserInformation((state) => state.userData);
 
@@ -18,6 +22,7 @@ const ParticipantList = () => {
             name={name}
             isTeacher={data.hostId === id}
             isMe={userData?.id == id}
+            leaveHandler={leaveHandler.bind(null, id)}
           />
         ))}
       </div>

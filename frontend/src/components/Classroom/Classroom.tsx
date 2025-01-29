@@ -1,4 +1,4 @@
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ExcalidrawComponent from "../ExcalidrawComponent";
 import { Button } from "../ui/button";
 import Header from "./Header";
@@ -8,6 +8,7 @@ import axios from "axios";
 import useUserInformation from "@/hooks/useUserInformation";
 import useRoom from "@/hooks/useRoom";
 import { socket } from "@/App";
+import { LogOut } from "lucide-react/icons";
 
 const Classroom = () => {
   const { roomId } = useParams();
@@ -33,35 +34,31 @@ const Classroom = () => {
     })();
   }, [roomId, userData]);
 
-  const leaveHandler = () => {
-    socket.emit("leave-room", roomId, userData?.id);
-    removeMember(userData?.id!);
-    navigate("/");
+  const leaveHandler = (userId: number) => {
+    socket.emit("leave-room", roomId, userId);
+    removeMember(userId);
+    if (userId === userData?.id) navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-amber-50">
-      <NavLink to={"/"}>
-        <Header />
-      </NavLink>
+      <Header />
       <main className="container mx-auto py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
             <ExcalidrawComponent />
             <div className="flex justify-center space-x-4">
-              <Button className="bg-green-600 hover:bg-green-700 text-white font-mono">
-                Raise Hand
-              </Button>
               <Button
-                onClick={leaveHandler}
+                onClick={leaveHandler.bind(null, userData?.id!)}
                 className="bg-red-600 hover:bg-red-700 text-white font-mono"
               >
+                <LogOut />
                 Leave Class
               </Button>
             </div>
           </div>
           <div className="lg:col-span-1">
-            <ParticipantList />
+            <ParticipantList leaveHandler={leaveHandler} />
           </div>
         </div>
       </main>

@@ -49,7 +49,7 @@ const Landing = () => {
       <div className="w-full max-w-md bg-[#ece6c2]/50 border-4 border-[#6f5643] rounded-lg shadow-lg p-6 space-y-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20"></div>
         <h1 className="text-4xl font-bold text-center text-[#6f5643] font-retro retro-glow relative z-10">
-          Retro Meet
+          Classroom
         </h1>
 
         <div className="space-y-4 relative z-10">
