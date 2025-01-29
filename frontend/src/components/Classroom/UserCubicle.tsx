@@ -4,9 +4,10 @@ import { User } from "lucide-react";
 interface UserCubicleProps {
   name: string;
   isTeacher: boolean;
+  isMe: boolean;
 }
 
-const UserCubicle = ({ name, isTeacher }: UserCubicleProps) => {
+const UserCubicle = ({ name, isTeacher, isMe }: UserCubicleProps) => {
   return (
     <div className="bg-[#73bda8]/40 border-2 border-[#73bda8] rounded-lg p-4 shadow-md">
       <div className="bg-amber-100 border-2 border-[#73bda8] rounded-t-lg p-2 mb-2">
@@ -20,6 +21,13 @@ const UserCubicle = ({ name, isTeacher }: UserCubicleProps) => {
           <div className="mt-1">
             <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-mono">
               Host
+            </span>
+          </div>
+        )}
+        {isMe && (
+          <div className="mt-1">
+            <span className="bg-[#73bda8] text-white text-xs px-4 py-1 rounded-full font-mono">
+              Me
             </span>
           </div>
         )}

@@ -12,7 +12,7 @@ import { socket } from "@/App";
 const Classroom = () => {
   const { roomId } = useParams();
   const userData = useUserInformation((state) => state.userData);
-  const { setData, setMember, removeMember } = useRoom();
+  const { setData, removeMember } = useRoom();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,16 +38,6 @@ const Classroom = () => {
     removeMember(userData?.id!);
     navigate("/");
   };
-
-  useEffect(() => {
-    socket.on("user-joined", (user) => {
-      setMember(user);
-    });
-
-    socket.on("user-left", (userId) => {
-      removeMember(userId);
-    });
-  }, []);
 
   return (
     <div className="min-h-screen bg-amber-50">
