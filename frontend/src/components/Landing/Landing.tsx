@@ -2,7 +2,7 @@ import useUserInformation from "@/hooks/useUserInformation";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
@@ -10,6 +10,7 @@ const Landing = () => {
   const { userData, setUserData } = useUserInformation();
   const [name, setName] = useState(userData?.name);
   const [roomNumber, setRoomNumber] = useState("");
+  const [existingRoomNumber, setExistingRoomNumber] = useState("");
   const navigate = useNavigate();
 
   const handleCreateRoom = async () => {
@@ -28,7 +29,7 @@ const Landing = () => {
     }
   };
 
-  const handleJoinRoom = async () => {
+  const handleJoinRoom = async (roomId: string) => {
     try {
       let userId = userData?.id;
       if (!userData?.id) {
@@ -37,21 +38,33 @@ const Landing = () => {
         userId = data.id;
       }
 
-      const { data } = await axios.post("/join-room", { userId, roomNumber });
+      const { data } = await axios.post("/join-room", {
+        userId,
+        roomNumber: roomId,
+      });
       navigate("/room/" + data.id);
     } catch (e) {
       console.log(e);
     }
   };
 
+  useEffect(() => {
+    if (!userData?.id) return;
+    (async () => {
+      const { data } = await axios.post("/get-existing-room", {
+        userId: userData?.id,
+      });
+      setExistingRoomNumber(data.roomId);
+    })();
+  }, [userData?.id]);
+
   return (
-    <div className="min-h-screen bg-amber-50 flex items-center justify-center p-4 retro-scanlines">
+    <div className="min-h-screen bg-amber-50 flex flex-col gap-y-4 items-center justify-center p-4 retro-scanlines">
       <div className="w-full max-w-md bg-[#ece6c2]/50 border-4 border-[#6f5643] rounded-lg shadow-lg p-6 space-y-6 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20"></div>
-        <h1 className="text-4xl font-bold text-center text-[#6f5643] font-retro retro-glow relative z-10">
+        <h1 className="text-4xl font-bold text-center font-mono text-[#6f5643] font-retro retro-glow relative z-10">
           Classroom
         </h1>
-
         <div className="space-y-4 relative z-10">
           <Input
             type="text"
@@ -97,7 +110,7 @@ const Landing = () => {
                 />
                 <Button
                   className="w-full bg-[#cc6b49]/90 hover:bg-[#cc6b49] text-gray-100 font-bold font-retro"
-                  onClick={handleJoinRoom}
+                  onClick={handleJoinRoom.bind(this, roomNumber)}
                   disabled={!name || !roomNumber}
                 >
                   Join Room
@@ -107,6 +120,24 @@ const Landing = () => {
           </Tabs>
         </div>
       </div>
+      {existingRoomNumber && (
+        <div className="w-full max-w-md bg-[#ece6c2]/50 border-4 border-[#6f5643] rounded-lg shadow-lg p-6 space-y-6 relative overflow-hidden">
+          <h3 className="text-xl font-bold text-[#6f5643] font-mono">
+            Existing Room
+          </h3>
+          <div className="flex items-center justify-between">
+            <h6 className="truncate pr-10">
+              Room number :{" "}
+              <span className="text-[#cc6b49] font-bold">
+                {existingRoomNumber}
+              </span>
+            </h6>
+            <Button onClick={handleJoinRoom.bind(this, existingRoomNumber)}>
+              Join Room
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

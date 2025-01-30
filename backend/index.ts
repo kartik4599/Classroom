@@ -26,18 +26,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave-room", async (roomId, userId) => {
-    const user = await database.query.User.findFirst({
-      where: eq(User.id, userId),
-    });
-    if (!user) return;
-
     socket.leave(roomId);
-    io.to(roomId).emit("user-left", user.id);
-
-    await database
-      .update(User)
-      .set({ socketId: null })
-      .where(eq(User.id, userId));
+    io.to(roomId).emit("user-left", userId);
   });
 
   socket.on("draw-send", (data) => {

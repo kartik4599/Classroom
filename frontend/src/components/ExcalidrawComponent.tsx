@@ -7,7 +7,11 @@ import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types";
 import { useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const ExcalidrawComponent = () => {
+const ExcalidrawComponent = ({
+  leaveHandler,
+}: {
+  leaveHandler: (userId: number) => void;
+}) => {
   const { roomId } = useParams();
 
   const boardHtmlRef = useRef<HTMLDivElement | null>(null);
@@ -48,7 +52,10 @@ const ExcalidrawComponent = () => {
     });
 
     socket.on("user-left", (userId) => {
-      if (userData?.id === userId) navigate("/");
+      if (userData?.id === userId) {
+        leaveHandler(userId);
+        navigate("/");
+      }
       removeMember(userId);
     });
   }, [roomId, userData?.id]);

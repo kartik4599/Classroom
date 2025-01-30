@@ -4,11 +4,11 @@ import { Button } from "../ui/button";
 import Header from "./Header";
 import ParticipantList from "./ParticipantList";
 import { useEffect } from "react";
-import axios from "axios";
 import useUserInformation from "@/hooks/useUserInformation";
 import useRoom from "@/hooks/useRoom";
 import { socket } from "@/App";
 import { LogOut } from "lucide-react/icons";
+import axios from "../../lib/utils";
 
 const Classroom = () => {
   const { roomId } = useParams();
@@ -39,7 +39,11 @@ const Classroom = () => {
     return clearData;
   }, [roomId, userData]);
 
-  const leaveHandler = (userId: number) => {
+  const leaveHandler = async (userId: number) => {
+    await axios.post("leave-room", {
+      userId,
+      roomNumber: roomId,
+    });
     socket.emit("leave-room", roomId, userId);
     removeMember(userId);
     if (userId === userData?.id) navigate("/");
@@ -51,7 +55,7 @@ const Classroom = () => {
       <main className="container mx-auto py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            <ExcalidrawComponent />
+            <ExcalidrawComponent leaveHandler={leaveHandler} />
             <div className="flex justify-center space-x-4">
               <Button
                 onClick={leaveHandler.bind(null, userData?.id!)}
