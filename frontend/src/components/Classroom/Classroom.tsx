@@ -13,11 +13,14 @@ import { LogOut } from "lucide-react/icons";
 const Classroom = () => {
   const { roomId } = useParams();
   const userData = useUserInformation((state) => state.userData);
-  const { setData, removeMember } = useRoom();
+  const { setData, removeMember, clearData } = useRoom();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!roomId || !userData?.id) return;
+    if (!roomId || !userData?.id) {
+      navigate("/");
+      return;
+    }
 
     (async () => {
       try {
@@ -32,6 +35,8 @@ const Classroom = () => {
         navigate("/");
       }
     })();
+
+    return clearData;
   }, [roomId, userData]);
 
   const leaveHandler = (userId: number) => {

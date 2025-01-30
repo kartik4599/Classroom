@@ -32,12 +32,13 @@ const ExcalidrawComponent = () => {
   };
 
   useEffect(() => {
-    if (data?.host) return;
+    if (!data) return;
+    if (data.host) return;
     socket.on("draw-receiving", (data) => {
       const elements = JSON.parse(data);
       boardRef.current?.updateScene({ elements });
     });
-  }, [socket, data?.host]);
+  }, [socket, data]);
 
   useEffect(() => {
     if (!roomId) return;
