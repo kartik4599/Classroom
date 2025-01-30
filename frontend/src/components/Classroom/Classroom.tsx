@@ -58,6 +58,21 @@ const Classroom = () => {
     if (userId === userData?.id) navigate("/");
   };
 
+  useEffect(() => {
+    window.onbeforeunload = async () => {
+      if (!userData?.id || !roomId) return;
+      await axios.post("/set-offline", {
+        userId: userData?.id,
+      });
+      socket.emit("going-offline-user", roomId, userData?.id);
+      clearData();
+    };
+
+    return () => {
+      window.onbeforeunload = null;
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-amber-50">
       <Header />

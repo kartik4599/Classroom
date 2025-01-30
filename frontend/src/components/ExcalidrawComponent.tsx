@@ -54,6 +54,7 @@ const ExcalidrawComponent = ({
     socket.on("user-left", (userId) => {
       if (userData?.id === userId) {
         leaveHandler(userId);
+        socket.emit("going-offline-user", roomId, userId);
         navigate("/");
       }
       removeMember(userId);
@@ -74,7 +75,6 @@ const ExcalidrawComponent = ({
           boardRef.current = api;
         }}
         viewModeEnabled={!data?.host}
-        zenModeEnabled
         onChange={onChange}
       />
     </div>

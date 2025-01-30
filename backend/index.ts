@@ -26,7 +26,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave-room", (roomId, userId) => {
-    socket.leave(roomId);
+    // socket.leave(roomId);
     io.to(roomId).emit("user-left", userId);
   });
 
