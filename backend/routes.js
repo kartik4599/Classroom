@@ -67,6 +67,37 @@ router.post("/join-room", async (req, res) => {
   }
 });
 
+router.post("/leave-room", async (req, res) => {
+  try {
+    const { userId, roomNumber } = req.body;
+
+    const [user, room] = await Promise.all([
+      database.query.User.findFirst({
+        where: eq(User.id, userId),
+      }),
+      database.query.Room.findFirst({
+        where: eq(Room.id, roomNumber),
+        with: { members: true },
+      }),
+    ]);
+
+    if (!user || !room)
+      return res.status(404).json({ error: "User or room not found" });
+
+    await database
+      .update(User)
+      .set({ roomId: null })
+      .where(eq(User.id, userId));
+
+    if (room.members.length === 1) {
+      await database.delete(Room).where(eq(Room.id, roomNumber));
+    }
+    return res.json(room);
+  } catch (e) {
+    res.status(500).send(e);
+  }
+});
+
 router.post("/get-room", async (req, res) => {
   try {
     const { userId, roomId } = req.body;
@@ -94,6 +125,23 @@ router.post("/add-socket", async (req, res) => {
   await database.update(User).set({ socketId }).where(eq(User.id, userId));
 
   return res.send("Socket added");
+});
+
+router.post("/get-existing-room", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await database.query.User.findFirst({
+      where: eq(User.id, userId),
+    });
+
+    if (!user || !user.roomId)
+      return res.status(404).json({ error: "User not found" });
+
+    return res.json({ roomId: user.roomId });
+  } catch (e) {
+    res.status(500).send(e);
+  }
 });
 
 export default router;
