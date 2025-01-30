@@ -36,7 +36,16 @@ const Classroom = () => {
       }
     })();
 
-    return clearData;
+    return () => {
+      if (!roomId || !userData?.id) return;
+      (async () => {
+        await axios.post("/set-offline", {
+          userId: userData.id,
+        });
+        socket.emit("going-offline-user", roomId, userData.id);
+        clearData();
+      })();
+    };
   }, [roomId, userData]);
 
   const leaveHandler = async (userId: number) => {

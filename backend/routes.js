@@ -114,6 +114,11 @@ router.post("/get-room", async (req, res) => {
 
     if (!member) return res.status(404).send("User not found");
 
+    await database
+      .update(User)
+      .set({ status: true })
+      .where(eq(User.id, userId));
+
     return res.json(room);
   } catch (e) {
     res.status(500).send(e);
@@ -144,4 +149,19 @@ router.post("/get-existing-room", async (req, res) => {
   }
 });
 
+router.post("/set-offline", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    await database
+      .update(User)
+      .set({ status: false })
+      .where(eq(User.id, userId));
+
+    res.send("User offline");
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
+});
 export default router;

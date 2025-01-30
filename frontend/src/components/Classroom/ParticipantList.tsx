@@ -16,13 +16,14 @@ const ParticipantList = ({
         Participants
       </h2>
       <div className="grid grid-cols-2 gap-4">
-        {data?.members.map(({ id, name }) => (
+        {data?.members.map(({ id, name, status }) => (
           <UserCubicle
             key={id}
             name={name}
             isTeacher={data.hostId === id}
             isMe={userData?.id == id}
             leaveHandler={leaveHandler.bind(null, id)}
+            status={status}
           />
         ))}
       </div>

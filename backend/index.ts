@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("user-joined", user);
   });
 
-  socket.on("leave-room", async (roomId, userId) => {
+  socket.on("leave-room", (roomId, userId) => {
     socket.leave(roomId);
     io.to(roomId).emit("user-left", userId);
   });
@@ -36,5 +36,10 @@ io.on("connection", (socket) => {
 
   socket.on("draw-sending", (roomId, data) => {
     io.to(roomId).emit("draw-receiving", data);
+  });
+
+  socket.on("going-offline-user", (roomId, userId) => {
+    socket.leave(roomId);
+    io.to(roomId).emit("gone-offline-user", userId);
   });
 });

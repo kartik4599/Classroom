@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 import {
+  boolean,
   integer,
   pgTable,
   smallserial,
@@ -12,6 +13,7 @@ export const User = pgTable("user", {
   name: varchar().notNull(),
   socketId: varchar(),
   roomId: uuid("roomId").references(() => Room.id),
+  status: boolean("status").default(false),
 });
 
 export const Room = pgTable("room", {

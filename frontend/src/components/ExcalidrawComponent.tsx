@@ -17,7 +17,7 @@ const ExcalidrawComponent = ({
   const boardHtmlRef = useRef<HTMLDivElement | null>(null);
   const boardRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const previousElements = useRef<string | null>(null);
-  const { data, setMember, removeMember } = useRoom();
+  const { data, setMember, removeMember, setUserStatus } = useRoom();
   const userData = useUserInformation((state) => state.userData);
   const navigate = useNavigate();
 
@@ -49,14 +49,17 @@ const ExcalidrawComponent = ({
     socket.on("user-joined", (user) => {
       setMember(user);
       socket.emit("draw-sending", roomId, previousElements.current);
+      setUserStatus(user?.id, true);
     });
-
     socket.on("user-left", (userId) => {
       if (userData?.id === userId) {
         leaveHandler(userId);
         navigate("/");
       }
       removeMember(userId);
+    });
+    socket.on("gone-offline-user", (userId) => {
+      setUserStatus(userId, false);
     });
   }, [roomId, userData?.id]);
 
