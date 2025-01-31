@@ -9,6 +9,7 @@ import useRoom from "@/hooks/useRoom";
 import { socket } from "@/App";
 import { LogOut } from "lucide-react/icons";
 import axios from "../../lib/utils";
+import ChatBox from "./ChatBox";
 
 const Classroom = () => {
   const { roomId } = useParams();
@@ -91,6 +92,9 @@ const Classroom = () => {
             </div>
           </div>
           <div className="lg:col-span-1">
+            <ChatBox />
+          </div>
+          <div className="lg:col-span-3">
             <ParticipantList leaveHandler={leaveHandler} />
           </div>
         </div>
