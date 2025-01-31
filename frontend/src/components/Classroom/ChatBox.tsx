@@ -19,7 +19,6 @@ export default function RetroGroupChat() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // useEffect(() => {
-  //   chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   // }, [chatEndRef]); //Fixed unnecessary dependency
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -47,12 +46,21 @@ export default function RetroGroupChat() {
           { ...data, timestamp: new Date(data?.timestamp) },
         ];
       });
+
+      chatEndRef.current?.scrollTo({
+        left: 0,
+        top: chatEndRef.current?.scrollHeight,
+        behavior: "smooth",
+      });
     });
   }, [socket]);
 
   return (
-    <div className="lg:col-span-1 flex flex-col min-h-[60vh] h-[calc(100%-40px)] w-full mx-auto bg-amber-100 p-3 font-mono text-gray-800 border-4 border-orange-800 rounded-lg shadow-lg">
-      <div className="flex-grow overflow-auto mb-4 border-2 border-orange-800 p-2 rounded bg-white">
+    <div className="lg:col-span-1 flex flex-col w-full h-[calc(70vh)] mx-auto bg-amber-100 p-3 font-mono text-gray-800 border-4 border-orange-800 rounded-lg shadow-lg">
+      <div
+        className="py-6 overflow-y-auto mb-4 h-[65vh] border-2 border-orange-800 p-2 rounded bg-white"
+        ref={chatEndRef}
+      >
         {messages.map((message, index) => (
           <div key={index} className="mb-2">
             <span className="text-gray-600">
@@ -62,7 +70,6 @@ export default function RetroGroupChat() {
             <span>{message.text}</span>
           </div>
         ))}
-        <div ref={chatEndRef} />
       </div>
       <form onSubmit={handleSendMessage} className="flex">
         <input
