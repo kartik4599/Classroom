@@ -91,9 +91,7 @@ const Classroom = () => {
               </Button>
             </div>
           </div>
-          <div className="lg:col-span-1">
-            <ChatBox />
-          </div>
+          <ChatBox />
           <div className="lg:col-span-3">
             <ParticipantList leaveHandler={leaveHandler} />
           </div>

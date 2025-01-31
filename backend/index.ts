@@ -23,15 +23,27 @@ io.on("connection", (socket) => {
     if (!user) return;
     socket.join(roomId);
     io.to(roomId).emit("user-joined", user);
+    socket.to(roomId).emit("chat-message", {
+      user: "System",
+      text: `${user.name} has joined the room.`,
+      timestamp: new Date(),
+    });
   });
 
   socket.on("leave-room", (roomId, userId) => {
     // socket.leave(roomId);
     io.to(roomId).emit("user-left", userId);
-  });
+    (async () => {
+      const user = await database.query.User.findFirst({
+        where: eq(User.id, userId),
+      });
 
-  socket.on("draw-send", (data) => {
-    socket.broadcast.emit("draw-receive", data);
+      io.to(roomId).emit("chat-message", {
+        user: "System",
+        text: `${user?.name} has left room.`,
+        timestamp: new Date(),
+      });
+    })();
   });
 
   socket.on("draw-sending", (roomId, data) => {
@@ -41,5 +53,9 @@ io.on("connection", (socket) => {
   socket.on("going-offline-user", (roomId, userId) => {
     socket.leave(roomId);
     io.to(roomId).emit("gone-offline-user", userId);
+  });
+
+  socket.on("chat-message", (roomId, data) => {
+    io.to(roomId).emit("chat-message", { ...data, timestamp: new Date() });
   });
 });
