@@ -4,7 +4,6 @@ import {
   Color4,
   Rect2,
   Erase,
-  SVGRenderer,
 } from "js-draw";
 import "js-draw/styles";
 import { MaterialIconProvider } from "@js-draw/material-icons";

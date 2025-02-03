@@ -6,6 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-axios.defaults.baseURL = "http://localhost:4999/api";
+axios.defaults.baseURL = "/api";
 
 export default axios;

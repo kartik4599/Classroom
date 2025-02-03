@@ -5,6 +5,7 @@ import cors from "cors";
 import database from "./database/database";
 import { eq } from "drizzle-orm";
 import { User } from "./database/schema";
+import path from "path";
 
 const app = Express();
 app.use(cors({ origin: "*" }), Express.json());
@@ -12,6 +13,13 @@ app.use(cors({ origin: "*" }), Express.json());
 app.use("/api", router);
 const server = app.listen(4999);
 const io = new Server(server, { cors: { origin: "*" } });
+
+const dirname = path.resolve();
+
+app.use(Express.static(path.join(dirname, "dist")));
+app.use("*", (req, res) =>
+  res.sendFile(path.join(dirname, "dist", "index.html"))
+);
 
 io.on("connection", (socket) => {
   socket.emit("connection", socket.id);

@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import useUserInformation from "./hooks/useUserInformation";
 import axios from "axios";
 
-export const socket = io("http://localhost:4999/");
+export const socket = io("/");
 
 const router = createBrowserRouter([
   { path: "/", element: <Landing /> },
